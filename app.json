@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "React Native Taxi",
+    "slug": "react-native-taxi",
+    "privacy": "public",
+    "sdkVersion": "32.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.TaxiApp.TaxiApp",
+      "supportsTablet": true,
+      "config" : {
+        "googleMapsApiKey": "AIzaSyB2Jl1PAwJD8opKHh2MbMRmIl4RDfp4PIk"
+      } 
+    },
+    "android": {
+      "package": "com.TaxiApp.TaxiApp",
+      "config": {
+        "googleMaps" :{
+          "apiKey": "AIzaSyB2Jl1PAwJD8opKHh2MbMRmIl4RDfp4PIk" 
+        } 
+      }
+    }
+  }
+}
