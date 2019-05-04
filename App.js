@@ -4,6 +4,10 @@ import { AppLoading, Font } from 'expo';
 import Driver from './screens/Driver'
 import Passenger from './screens/Passenger';
 import { YellowBox } from 'react-native';
+import genericContainer from './components/GenericContainer';
+
+const DriverWithGenericContainer = genericContainer(Driver);
+const PassengerWithGenericContainer = genericContainer(Passenger);
 
 console.ignoredYellowBox = ['Remote debugger'];
 YellowBox.ignoreWarnings([
@@ -37,9 +41,9 @@ export default class App extends Component {
     }
 
     if (this.state.isDriver){
-      return <Driver/>
+      return <DriverWithGenericContainer/>
     } else if(this.state.isPassenger) {
-      return <Passenger/>
+      return <PassengerWithGenericContainer/>
     }
 
     return (

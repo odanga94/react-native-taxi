@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, TextInput, Text, TouchableWithoutFeedback, Keyboard, ActivityIndicator, Image} from 'react-native';
-import { MapView, Location, Permissions} from 'expo';
+import { MapView } from 'expo';
 import PolyLine from '@mapbox/polyline';
 import apiKey from '../googleapikey';
 import _ from 'lodash';
@@ -11,8 +11,6 @@ export default class Passenger extends Component {
   constructor(props){
     super(props);
     this.state = {
-      locationResult: null,
-      location: {coords: { latitude: -1.28333, longitude: 36.8219}},
       destination: "",
       predictions: [],
       isReady: false,
@@ -22,32 +20,15 @@ export default class Passenger extends Component {
       driverIsOnTheWay: false,
       driverLocation: null
     };
-    this._getLocationAsync = this._getLocationAsync.bind(this);
     this.onChangeDestinationDebounced = _.debounce(this.onChangeDestination.bind(this), 250);
     this.getRouteDirections = this.getRouteDirections.bind(this);
     this.requestDriver = this.requestDriver.bind(this);
+    this.watchId = {}
   }
 
-  componentDidMount() {
-    this._getLocationAsync();
-
-  }
-
-  _getLocationAsync = async () => {
-   let { status } = await Permissions.askAsync(Permissions.LOCATION);
-   if (status !== 'granted') {
-     this.setState({
-       locationResult: 'Permission to access location was denied',
-       location,
-     });
-   }
-
-   let location = await Location.getCurrentPositionAsync({});
-   this.setState({ locationResult: JSON.stringify(location), location, });
- };
 
   async onChangeDestination(destination){
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${apiKey}&input=${destination}&location=${this.state.location.coords.latitude},${this.state.location.coords.longitude}&radius=2000`;
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${apiKey}&input=${destination}&location=${this.props.location.coords.latitude},${this.props.location.coords.longitude}&radius=2000`;
     try{
       const result = await fetch(apiUrl);
       const json = await result.json();
@@ -63,7 +44,7 @@ export default class Passenger extends Component {
   async getRouteDirections(destinationPlaceId, destinationName){
     try{
       // console.log(this.state.predictions);
-      const apiUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${this.state.location.coords.latitude},${this.state.location.coords.longitude}&destination=place_id:${destinationPlaceId}&key=${apiKey}`;
+      const apiUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${this.props.location.coords.latitude},${this.props.location.coords.longitude}&destination=place_id:${destinationPlaceId}&key=${apiKey}`;
       const response = await fetch(apiUrl);
       const json = await response.json();
       console.log(json);
@@ -76,13 +57,13 @@ export default class Passenger extends Component {
       this.map.fitToCoordinates(pointCoords, {edgePadding: {top: 20, bottom: 20, left: 20, right: 20}})
 
     } catch(error){
-      console.error(error)
+      console.log(error)
     }
   }
 
   async requestDriver(){
     this.setState({lookingForDriver: true});
-    const socket = socketIO.connect('http://10.112.15.153:3000');
+    const socket = socketIO.connect('http://192.168.100.3:3000');
     socket.on('connect', () => {
       console.log('client connected');
       //Request a Taxi
@@ -90,6 +71,7 @@ export default class Passenger extends Component {
     });
 
     socket.on('driverLocation', (driverLocation) => {
+      console.log('driver location updated');
       const pointCoords = [...this.state.pointCoords, driverLocation];
       this.map.fitToCoordinates(pointCoords, {edgePadding: {top: 30, bottom: 30, left: 30, right: 30}});
       this.setState({lookingForDriver: false, driverIsOnTheWay: true, driverLocation});
@@ -132,8 +114,8 @@ export default class Passenger extends Component {
           ref={map => {this.map = map}}
           style={styles.map}
           initialRegion={{
-            latitude: this.state.location.coords.latitude,
-            longitude: this.state.location.coords.longitude,
+            latitude: this.props.location.coords.latitude,
+            longitude: this.props.location.coords.longitude,
             latitudeDelta: 0.5,
             longitudeDelta: 0.5
           }}      
