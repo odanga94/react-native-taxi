@@ -1,32 +1,45 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, TouchableWithoutFeedback, Button} from 'react-native';
+import {YellowBox} from 'react-native';
 import { AppLoading, Font } from 'expo';
-import Driver from './screens/Driver'
-import Passenger from './screens/Passenger';
-import { YellowBox } from 'react-native';
-import genericContainer from './components/GenericContainer';
-
-const DriverWithGenericContainer = genericContainer(Driver);
-const PassengerWithGenericContainer = genericContainer(Passenger);
+import { createAppContainer, createStackNavigator } from 'react-navigation';
+import HomeScreen from './screens/HomeScreen';
+import Login from './screens/Login';
 
 console.ignoredYellowBox = ['Remote debugger'];
 YellowBox.ignoreWarnings([
     'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'
 ]);
 
+const RootStack = createStackNavigator(
+  {
+    Login: {
+      screen: Login,
+      navigationOptions: ({ navigation }) => ({
+        header: null
+      })
+    },
+    Home: {
+      screen: HomeScreen,
+      navigationOptions: ({ navigation }) => ({
+        header: null
+      })
+    }
+  },
+  {
+    initialRouteName: 'Login'
+  }
+);
+
+const AppContainer = createAppContainer(RootStack);
+
 export default class App extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      isReady: false,
-      isDriver: false,
-      isPassenger: false
-    };
-    
+    this.state = {isReady: false}
   }
-
+  
   async cacheResourcesAsync(){
-    Font.loadAsync({Poppins: require('./assets/Poppins-Regular.ttf')})
+    await Font.loadAsync({Poppins: require('./assets/Poppins-Regular.ttf')});
   }
   
   render() {
@@ -39,26 +52,9 @@ export default class App extends Component {
         />
       );
     }
-
-    if (this.state.isDriver){
-      return <DriverWithGenericContainer/>
-    } else if(this.state.isPassenger) {
-      return <PassengerWithGenericContainer/>
-    }
-
-    return (
-      <View style={styles.container}>
-        <Button onPress={() => this.setState({isPassenger: true})} title="Passenger" />
-        <Button onPress={() => this.setState({isDriver: true})} title="Driver" />
-      </View>
-    );
+    return <AppContainer/>   
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 50
-  }
-});
+
 
