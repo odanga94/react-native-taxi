@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet} from 'react-native'
+import { TouchableOpacity, View, Text, StyleSheet, Platform} from 'react-native'
 
 
 export default class BottomButton extends React.Component{
@@ -17,7 +17,7 @@ export default class BottomButton extends React.Component{
 
 const styles = StyleSheet.create({
   bottomButton: {
-    backgroundColor: "black",
+    backgroundColor: "rgb(25, 31, 76)",
     marginTop: "auto",
     margin: 20,
     padding: 15,
@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   bottomButtonText: {
-    fontSize: 20,
+    fontFamily: Platform.OS === 'android' ? 'sans-serif-light' : 'Poppins',
+    fontSize: 25,
     color: "white",
     fontWeight: "600"
   }

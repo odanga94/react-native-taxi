@@ -131,15 +131,15 @@ export default class Driver extends Component {
           initialRegion={{
             latitude: this.props.location.coords.latitude,
             longitude: this.props.location.coords.longitude,
-            latitudeDelta: 0.2,
-            longitudeDelta: 0.2
+            latitudeDelta: 0.025,
+            longitudeDelta: 0.025
           }}    
           onUserLocationChange={this._getLocationAsync}
           showsUserLocation={true}
         >
           <MapView.Polyline
             coordinates={this.state.pointCoords}
-            strokeWidth={2}
+            strokeWidth={3}
             strokeColor="red"
           />
           {endMarker}
@@ -160,21 +160,6 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject
-  },
-
-  bottomButton: {
-    backgroundColor: 'black',
-    marginTop: 'auto',
-    marginBottom: 20,
-    padding: 15,
-    paddingLeft: 30,
-    paddingRight: 30,
-    alignSelf: 'center'
-  },
-
-  bottomButtonText: {
-    color: 'white',
-    fontSize: 18,
   }
 });
 

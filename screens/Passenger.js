@@ -18,7 +18,8 @@ export default class Passenger extends Component {
       routeResponse: null,
       lookingForDriver: false,
       driverIsOnTheWay: false,
-      driverLocation: null
+      driverLocation: null,
+      buttonText: "REQUEST TAXI 🚗"
     };
     this.onChangeDestinationDebounced = _.debounce(this.onChangeDestination.bind(this), 250);
     this.getRouteDirections = this.getRouteDirections.bind(this);
@@ -34,7 +35,8 @@ export default class Passenger extends Component {
       const json = await result.json();
       // console.log(json);
       this.setState({
-        predictions: json.predictions
+        predictions: json.predictions,
+        buttonText: 'REQUEST TAXI 🚗'
       })
     } catch(err){
       console.error(err);
@@ -74,7 +76,12 @@ export default class Passenger extends Component {
       console.log('driver location updated');
       const pointCoords = [...this.state.pointCoords, driverLocation];
       this.map.fitToCoordinates(pointCoords, {edgePadding: {top: 30, bottom: 30, left: 30, right: 30}});
-      this.setState({lookingForDriver: false, driverIsOnTheWay: true, driverLocation});
+      this.setState({
+        lookingForDriver: false, 
+        driverIsOnTheWay: true, 
+        driverLocation,
+        buttonText: 'DRIVER IS ON THE WAY'
+      });
     });
   }
 
@@ -102,7 +109,7 @@ export default class Passenger extends Component {
         <MapView.Marker coordinate={this.state.pointCoords[this.state.pointCoords.length - 1]}/>
       );
       getDriver = (
-        <BottomButton onPressFunction={this.requestDriver} buttonText="REQUEST 🚗">
+        <BottomButton onPressFunction={this.requestDriver} buttonText={this.state.buttonText}>
           {findingDriverActIndicator}
         </BottomButton>
       );
@@ -116,15 +123,15 @@ export default class Passenger extends Component {
           initialRegion={{
             latitude: this.props.location.coords.latitude,
             longitude: this.props.location.coords.longitude,
-            latitudeDelta: 0.5,
-            longitudeDelta: 0.5
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05
           }}      
           onUserLocationChange={this._getLocationAsync}
           showsUserLocation={true}
         >
           <MapView.Polyline
             coordinates={this.state.pointCoords}
-            strokeWidth={2}
+            strokeWidth={3}
             strokeColor="red"
           />
           {
